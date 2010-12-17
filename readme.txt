@@ -28,8 +28,6 @@ This plug-in can:
 
 The support forums over here, drop me a tweet to notify me of your support topic over here.
 
-<br>
-<br>Coding by: <a href="http://www.mijnpress.nl">MijnPress.nl</a> <a href="http://twitter.com/#!/ramonfincken">Twitter profile</a> <a href="http://wordpress.org/extend/plugins/profile/ramon-fincken">More plugins</a>
 
 == Installation ==
 
