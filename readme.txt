@@ -19,6 +19,8 @@ Based on: <a href="http://wordpress.org/extend/plugins/cimy-user-manager/">Cimy 
 This plug-in can:
 
  1. export all users’ profiles into a CSV file. It can as well export WordPress and Register Plus Redux Extra Fields.
+<br>
+<br>Coding by: <a href="http://www.mijnpress.nl">MijnPress.nl</a> <a href="http://twitter.com/#!/ramonfincken">Twitter profile</a> <a href="http://wordpress.org/extend/plugins/profile/ramon-fincken">More plugins</a>
 
 == Frequently Asked Questions ==
 
