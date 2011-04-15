@@ -4,8 +4,8 @@ Donate link: http://donate.ramonfincken.com
 Website link: http://www.mijnpress.nl
 Tags: register, plus, redux, register plus, register plus redux, csv, excel, export, admin, users
 Requires at least: 2.5
-Tested up to: 3.0.3
-Stable tag: 1.0
+Tested up to: 3.1.1
+Stable tag: 1.1
 
 Export users to CSV files, supports all WordPress profile data also Register Plus Redux Extra Fields plug-in.
 
@@ -34,6 +34,17 @@ The support forums over here, drop me a tweet to notify me of your support topic
 1. Upload directory `register-plus-redux-export-users` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Visit user tab in the menu to export users
+
+== Changelog ==
+
+= 1.1 =
+Bugfix: removed $current_user<br>
+Bugfix: refer check<br>
+Added: unlink file after download<br>
+Added: check for WP_TEMP_DIR<br>
+Added: is_admin check
+
+
 
 == Screenshots ==
 

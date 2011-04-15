@@ -3,7 +3,7 @@
 Plugin Name: Register Plus redux export users
 Plugin URI: http://www.mijnpress.nl
 Plugin Description: Export users to CSV files, supports all WordPress profile data also Register Plus Redux plug-in
-Version: 1.0
+Version: 1.1
 Author: Ramon Fincken
 Author URI: http://www.mijnpress.nl
 Based on: Cimy User Manager 0.9.2 by Marco Cimmino, cimmino.marco@gmail.com
@@ -71,6 +71,7 @@ if(!class_exists('mijnpress_plugin_framework'))
 	include('mijnpress_plugin_framework.php');
 }
 
+
 class plugin_register_plus_redux_export_users extends mijnpress_plugin_framework
 {
 	function __construct()
@@ -131,8 +132,8 @@ if(mijnpress_plugin_framework::is_admin())
 }
 
 function plugin_registerplusredux_eu_download_database() {
-	if (isset($_POST["plugin_registerplusredux_eu_filename"])) {
-		if(strpos($_SERVER['HTTP_REFERER'], admin_url('users.php?page=register-plus-redux-export-users%2Fregisterplusredux_user_manager.php')) !== false) {
+	if (isset($_POST["plugin_registerplusredux_eu_filename"]) && mijnpress_plugin_framework::is_admin()) {
+		if(strpos($_SERVER['HTTP_REFERER'], admin_url('users.php?page=register-plus-redux-export-users/registerplusredux_user_manager.php')) !== false) {
 			$plugin_registerplusredux_eu_filename = $_POST["plugin_registerplusredux_eu_filename"];
 
 			header("Pragma: "); // Leave blank for issues with IE
@@ -142,10 +143,18 @@ function plugin_registerplusredux_eu_download_database() {
 			header("Content-Type: text/csv");
 			header("Content-Type: application/force-download");
 			header("Content-Type: application/download");
-			header("Content-Disposition: attachment; filename=\"".basename($plugin_registerplusredux_eu_filename)."\";");
-			header("Content-Transfer-Encoding: binary");
-			header("Content-Length: ".filesize($plugin_registerplusredux_eu_filename));
-			readfile($plugin_registerplusredux_eu_filename);
+			if(file_exists($plugin_registerplusredux_eu_filename))
+			{
+				header("Content-Disposition: attachment; filename=\"".basename($plugin_registerplusredux_eu_filename)."\";");
+				header("Content-Transfer-Encoding: binary");
+				header("Content-Length: ".filesize($plugin_registerplusredux_eu_filename));
+				readfile($plugin_registerplusredux_eu_filename);
+				@unlink($plugin_registerplusredux_eu_filename);
+			}
+			else
+			{
+				// TODO: show message
+			}
 			exit();
 		}
 	}
@@ -165,7 +174,7 @@ function plugin_registerplusredux_eu_i18n_setup() {
 function plugin_registerplusredux_eu_import_export_page() {
 	global $plugin_registerplusredux_eu_domain, $cimy_uef_name;
 	
-	if (!current_user_can('edit_users'))
+	if (!mijnpress_plugin_framework::is_admin())
 		return;
 
 	$results_import = array();
@@ -799,32 +808,14 @@ function plugin_registerplusredux_eu_export_data() {
 
 						
 	if ($extra_fields) {
-/*
-		foreach ($extra_fields as $field) {
-			// avoid radio fields duplicates
-			if ($field["TYPE"] == "radio") {
-				if (in_array($field["NAME"], $all_radio_fields))
-					continue;
-				else
-					$all_radio_fields[] = $field["NAME"];
-			}
-	*/
-				// Hack Ramon Fincken, show all fields for admin
-				$current_user = wp_get_current_user();
-				$current_user_id = ! empty($current_user) ? $current_user->id : 0;
-				$current_user = new WP_User($current_user_id);
-						
+
+				// Hack Ramon Fincken, show all fields
 				if ( is_array($extra_fields) ) 
 				{
 					foreach ( $extra_fields as $k => $v ) 
 					{
-						if ( !empty($v["show_on_profile"]) || $current_user->has_cap('delete_users')) 
-						{
-							$key = $RegisterPlusReduxPlugin->sanitizeText($v["custom_field_name"]);
-							$all_radio_fields[] = $key;
-							//$value = get_user_meta($profileuser->ID, $key, true);
-							//$ef_db = $value;
-						}
+						$key = $RegisterPlusReduxPlugin->sanitizeText($v["custom_field_name"]);
+						$all_radio_fields[] = $key;
 						$line .= $field_separator.$text_separator.$key.$text_separator;
 					}
 				}				
@@ -858,40 +849,14 @@ function plugin_registerplusredux_eu_export_data() {
 				if ($extra_fields) {
 					if ( is_array($extra_fields) ) {
 						foreach ( $extra_fields as $k => $v ) {
-							if ( !empty($v["show_on_profile"]) || $current_user->has_cap('delete_users')) {
-								$key = $RegisterPlusReduxPlugin->sanitizeText($v["custom_field_name"]);
-								// $all_radio_fields[] = $key;
-								$value = get_user_meta($current_user->ID, $key, true);
-								$ef_db = $value;
-							}
+							$key = $RegisterPlusReduxPlugin->sanitizeText($v["custom_field_name"]);
+							$value = get_user_meta($current_user->ID, $key, true);
+							$ef_db = $value;
 							$line .= $field_separator.$text_separator.$ef_db.$text_separator;
 						}
 					}
 				}
-								
-				
-		/*		
-		if ($extra_fields) {
-			$all_radio_fields = array();
 			
-			foreach ($extra_fields as $field) {
-				// avoid radio fields duplicates
-				if ($field["TYPE"] == "radio") {
-					if (in_array($field["NAME"], $all_radio_fields))
-						continue;
-					else
-						$all_radio_fields[] = $field["NAME"];
-				}
-				
-				$ef_db = get_cimyFieldValue($current_user->ID, $field["NAME"]);
-				
-				if ($field["TYPE"] == "registration-date")
-					$ef_db = cimy_get_formatted_date($ef_db, $db_date_format);
-				
-				$line .= $field_separator.$text_separator.$ef_db.$text_separator;
-			}
-		}
-	*/
 		$line .= "\r";
 		
 		fwrite($fd_tmp_file, $line);
@@ -906,6 +871,11 @@ function plugin_registerplusredux_eu_export_data() {
 
 function plugin_registerplusredux_eu_get_temp_dir() {
 	$temp_dir = "";
+	if(defined('WP_TEMP_DIR') && is_writable(WP_TEMP_DIR))
+	{
+		return WP_TEMP_DIR;
+	}
+	
 	if (function_exists("sys_get_temp_dir"))
 		$temp_dir = sys_get_temp_dir();
 
@@ -913,7 +883,7 @@ function plugin_registerplusredux_eu_get_temp_dir() {
 		return $temp_dir;
 
 	// Try to get from environment variable
-	else if ((!empty($_ENV['TMP'])) && (is_writable(realpath($_ENV['TMP']))))
+	if ((!empty($_ENV['TMP'])) && (is_writable(realpath($_ENV['TMP']))))
 	{
 		return realpath($_ENV['TMP']);
 	}
@@ -944,5 +914,4 @@ function plugin_registerplusredux_eu_get_temp_dir() {
 		}
 	}
 }
-
 ?>
