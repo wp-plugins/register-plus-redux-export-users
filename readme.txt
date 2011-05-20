@@ -26,10 +26,11 @@ This plug-in can:
 
 = I have a lot of questions and I want support where can I go? =
 
-The support forums over here, drop me a tweet to notify me of your support topic over here.
+<a href="http://pluginsupport.mijnpress.nl/">http://pluginsupport.mijnpress.nl/</a> or drop me a tweet to notify me of your support topic over here.<br>
+I always check my tweets, so mention my name with @ramonfincken and your problem.
 
 
-== Installation ==
+== Changelog ==
 
 1. Upload directory `register-plus-redux-export-users` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress.
