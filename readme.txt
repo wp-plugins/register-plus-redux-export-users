@@ -4,8 +4,8 @@ Donate link: http://donate.ramonfincken.com
 Website link: http://www.mijnpress.nl
 Tags: register, plus, redux, register plus, register plus redux, csv, excel, export, admin, users
 Requires at least: 2.5
-Tested up to: 3.1.1
-Stable tag: 1.1
+Tested up to: 3.1.3
+Stable tag: 1.5
 
 Export users to CSV files, supports all WordPress profile data also Register Plus Redux Extra Fields plug-in.
 
@@ -37,6 +37,9 @@ I always check my tweets, so mention my name with @ramonfincken and your problem
 3. Visit user tab in the menu to export users
 
 == Changelog ==
+
+= 1.5 =
+Bugfix: Framework did not work on multisite, is_admin() problem.<br>If anyone could help me with that ? :)
 
 = 1.1 =
 Bugfix: removed $current_user<br>
