@@ -3,7 +3,7 @@
 Plugin Name: Register Plus redux export users
 Plugin URI: http://www.mijnpress.nl
 Plugin Description: Export users to CSV files, supports all WordPress profile data also Register Plus Redux plug-in
-Version: 1.1
+Version: 1.6
 Author: Ramon Fincken
 Author URI: http://www.mijnpress.nl
 Based on: Cimy User Manager 0.9.2 by Marco Cimmino, cimmino.marco@gmail.com
@@ -133,7 +133,10 @@ if(mijnpress_plugin_framework::is_admin())
 
 function plugin_registerplusredux_eu_download_database() {
 	if (isset($_POST["plugin_registerplusredux_eu_filename"]) && mijnpress_plugin_framework::is_admin()) {
-		if(strpos($_SERVER['HTTP_REFERER'], admin_url('users.php?page=register-plus-redux-export-users/registerplusredux_user_manager.php')) !== false) {
+		if(
+		strpos(
+		strtolower($_SERVER['HTTP_REFERER']), 
+		strtolower(admin_url('users.php?page=register-plus-redux-export-users/registerplusredux_user_manager.php'))) !== false) {
 			$plugin_registerplusredux_eu_filename = $_POST["plugin_registerplusredux_eu_filename"];
 
 			header("Pragma: "); // Leave blank for issues with IE
@@ -156,6 +159,14 @@ function plugin_registerplusredux_eu_download_database() {
 				// TODO: show message
 			}
 			exit();
+		}
+		else
+		{
+			echo "Refer check fail. Please enable browser referrer headers.<br>";
+			echo "Origin: ".strtolower($_SERVER['HTTP_REFERER']);
+			echo "<br>";
+			echo "Match fail: ".strtolower(admin_url('users.php?page=register-plus-redux-export-users/registerplusredux_user_manager.php'));
+			die();
 		}
 	}
 }
@@ -765,7 +776,7 @@ function plugin_registerplusredux_eu_export_data() {
 	if (!current_user_can('edit_users'))
 		return;
 	
-	set_time_limit(0);
+	@set_time_limit(0);
 
 	$field_separator = stripslashes($_POST["db_field_separator"]);
 	$text_separator = stripslashes($_POST["db_text_separator"]);
