@@ -39,7 +39,7 @@ I always check my tweets, so mention my name with @ramonfincken and your problem
 == Changelog ==
 
 = 1.6 =
-Changed: Changed the refer check for downloads. (Problem with UpPerCase domains in the WP settings)
+Changed: Changed the refer check for downloads. (Problem with UpPerCase domains in the WP settings) Thanks to Florian for reporting!
 
 = 1.5 =
 Bugfix: Framework did not work on multisite, is_admin() problem.<br>If anyone could help me with that ? :)
